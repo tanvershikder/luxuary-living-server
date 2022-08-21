@@ -133,6 +133,28 @@ async function run() {
             res.send(result)
         })
 
+        // get user by its role
+        app.get('/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = await userCollection.findOne({ email: email })
+            console.log(user);
+            const isAdmin = user.role === 'admin'
+            res.send({ admin: isAdmin })
+        })
+
+        //make user as admin
+        app.put('/user/admin/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email
+            const filter = { email: email }
+            const updateDoc = {
+                $set: { role: 'admin' },
+            }
+            const result = await userCollection.updateOne(filter, updateDoc);
+            res.send({ result })
+
+        })
+
+
     }
     finally {
 
